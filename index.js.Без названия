@@ -1,0 +1,86 @@
+
+Vue.component('splashscreen', {
+  template: '#splashscreen-template',
+  props:['app'],
+  data:function(){
+    var t={
+      show:{
+        self:true,
+        loading:true,
+        save:storage.isSet('save'+this.app.id),
+        message:false,
+        help:false
+      },
+      message:'Привет! Как твои дела?',
+      helpCountDown:storage.isSet('helpCountDown')?storage.get('helpCountDown'):3
+    };
+    this.config=t;
+    return t;    
+  },
+  created:function(){
+    
+
+  },
+  mounted:function(){
+    Vue.prototype.$ss =this;
+    
+
+    if(this.config.show.save){
+      this.config.show.loading=false;
+
+    }else if(this.config.helpCountDown>0){
+      this.showHelp();
+    }else{
+      var ss=this;
+      setTimeout(function(){ss.config.show.self=0},750);
+    }
+
+
+    
+    
+
+
+    //this.hideAll();
+    //this.showHelp();  
+
+  },
+  methods:{
+    showScore:function(){
+      this.hideAll();
+
+      this.config.show.score=true;
+      this.config.show.self=true;
+
+      storage.set('helpCountDown',0);
+      
+    },
+    showHelp:function(){
+      
+
+      this.hideAll();
+      this.config.show.self=true;
+      this.config.show.help=true;
+
+      if(this.config.helpCountDown>0){
+        storage.set('helpCountDown',this.config.helpCountDown-1);
+      }
+    },
+  	showMessage:function(message){
+      
+      this.hideAll();  		
+  		
+  		this.config.message=message;
+  		this.config.show.message=true;
+  		this.config.show.self=true;
+  	},
+
+    hideAll:function(){
+      for(var k in this.config.show){
+        this.config.show[k]=false;
+      }
+
+
+    }
+
+  },
+})
